@@ -1,29 +1,29 @@
-# API Explorer
+# Atlas — Public APIs & Open Books
 
-A mobile-friendly first version of a Public API Explorer.
+Premium static redesign for `public-api-explorer`.
 
-## Features
-- Live API catalog from `https://api.publicapis.org`
-- Search by API name, description, or category
-- Category chips
-- Auth / HTTPS / CORS filters
-- Random API
-- API detail modal
-- Favorite APIs stored in browser localStorage
-- Responsive design for Android/mobile browsers
-- No framework and no build step
+Features:
+- Premium dark/glass UI
+- Explore APIs tab
+- Search, category, auth, HTTPS and CORS filters
+- Favorites saved in localStorage
+- API details and official links
+- Books Library tab
+- Gutendex book metadata
+- Search books/authors
+- Language filter
+- Covers, authors and download counts
+- Read online plus EPUB/PDF/TXT only when supplied by the source
+- Project Gutenberg source links
+- Responsive Android/mobile layout
+- No Node.js, framework or build step
 
-## Run
-Because this is a static app, you can deploy it to GitHub Pages, Cloudflare Pages, Netlify, Vercel, or any static web host.
+Deploy by replacing the site's `index.html` with the included file.
 
-For local testing, serve the folder with any static HTTP server.
+Data:
+- https://api.publicapis.org/entries
+- https://gutendex.com/books/
+- https://www.gutenberg.org/
 
-## Data source
-The app uses the Public APIs meta-API. Its documented endpoints include `/entries`, `/random`, `/categories`, and `/health`; it supports CORS and does not require authentication. See:
-https://github.com/davemachado/public-api
-
-The original catalog:
-https://github.com/public-apis/public-apis
-
-## Important
-The directory is a catalog of third-party APIs. Availability, rate limits, authentication requirements and terms belong to each individual API provider.
+Copyright:
+Project Gutenberg's copyright status is based on U.S. law. Users outside the U.S. should check applicable local copyright law before downloading or using a book.

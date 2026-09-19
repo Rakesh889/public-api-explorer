@@ -27,3 +27,7 @@ Data:
 
 Copyright:
 Project Gutenberg's copyright status is based on U.S. law. Users outside the U.S. should check applicable local copyright law before downloading or using a book.
+
+
+### Weather Dashboard
+The Weather tab uses Open-Meteo geocoding and forecast APIs. It requires no API key and shows current temperature, apparent temperature, humidity, wind, conditions, and a 5-day forecast.

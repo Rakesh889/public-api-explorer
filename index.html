@@ -3,98 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Atlas — APIs, Books, Weather + AI</title>
+<meta name="description" content="Atlas — Public APIs & Open Books">
+<title>Atlas — Public APIs & Open Books</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#070a12;color:#fff;font-family:sans-serif}
-.top{padding:15px;background:#0e1422;border-bottom:1px solid #222}
-.section{padding:20px}
-#aiButton{position:fixed;bottom:20px;right:20px;background:#8b6cff;color:#fff;padding:14px;border-radius:50%;cursor:pointer;font-size:20px;z-index:999}
-#aiChat{position:fixed;bottom:80px;right:20px;width:320px;height:420px;background:#0e1422;border:1px solid #333;border-radius:10px;display:none;flex-direction:column;z-index:999}
-#messages{flex:1;overflow:auto;padding:10px;font-size:13px}
-input{outline:none}
-button{cursor:pointer}
+:root{--bg:#070a12;--panel:#0e1422;--panel2:#121a2c;--line:#263149;--text:#f4f7ff;--muted:#9ba7bc;--accent:#8b6cff;--green:#26d3ae}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#25204c 0,#070a12 36%);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px max(16px,calc((100% - 1180px)/2));background:#070a12e8;border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}
+.brand{display:flex;gap:11px;align-items:center}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--accent),#31d6ff);display:grid;place-items:center;font-weight:900}.brand b{font-family:Manrope;font-size:17px}.brand small{display:block;color:var(--muted);font-size:11px}
+.tabs{display:flex;gap:7px}.tab,.secondary{border:1px solid var(--line);background:#101728;color:#cbd5e7;border-radius:11px;padding:9px 12px}.tab.active{background:#261f58;border-color:#745fff;color:#fff}
+main{max-width:1180px;margin:auto}.hero{padding:52px 18px 20px}.eyebrow{font-size:11px;letter-spacing:.17em;font-weight:800;color:#aa9cff}.hero h1{font-family:Manrope;font-size:clamp(35px,6vw,63px);line-height:1.01;letter-spacing:-.045em;max-width:850px;margin:10px 0 13px}.hero p{color:var(--muted);max-width:700px;font-size:16px}
+.search{display:flex;align-items:center;gap:10px;max-width:800px;margin-top:25px;padding:0 15px;background:#0e1422;border:1px solid var(--line);border-radius:16px}.search input{width:100%;padding:16px 0;border:0;outline:0;background:transparent;color:#fff}.search span{color:#74819a;font-size:20px}
+.toolbar{margin:10px 18px 15px;padding:12px 14px;border:1px solid var(--line);background:#0e1422cc;border-radius:15px}.chips{display:flex;gap:7px;overflow:auto;padding-bottom:11px}.chip{white-space:nowrap;border:1px solid var(--line);background:transparent;color:#b8c3d7;border-radius:999px;padding:8px 12px}.chip.active{background:#251f56;border-color:#745fff;color:#fff}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select,.filters button{background:#121a2c;color:#dce4f5;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.stats{display:flex;gap:10px;padding:0 18px 14px}.stat{background:#0e1422;border:1px solid var(--line);border-radius:12px;padding:10px 14px}.stat b{font-size:19px}.stat span{font-size:12px;color:var(--muted);margin-left:5px}.status{color:var(--muted);padding:0 18px 14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 18px 55px}.card{background:linear-gradient(180deg,#121a2bf5,#0d1421f5);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 10px 30px #0003}.cardtop{display:flex;justify-content:space-between}.icon{width:42px;height:42px;border-radius:12px;background:#202b46;display:grid;place-items:center;color:#bdc7ff;font-size:11px;font-weight:900}.fav{border:0;background:none;color:#71809a;font-size:24px}.fav.active{color:#ffd35c}.card h3{margin:13px 0 6px;font-family:Manrope}.desc{color:var(--muted);line-height:1.5;font-size:13px;min-height:58px}.badges{display:flex;gap:6px;flex-wrap:wrap}.badge{font-size:11px;padding:5px 8px;border-radius:7px;background:#1a2439;color:#bbc7df}.good{color:#8ff0d7;background:#123b34}.actions{display:flex;gap:8px;margin-top:14px}.actions>*{flex:1;text-align:center;text-decoration:none}.primary{border:0;background:var(--accent);color:#fff;border-radius:9px;padding:9px 12px;font-weight:700}
+.books{display:none}.books.active{display:block}.weather{display:none}.weather.active{display:block}.weatherbox{margin:10px 18px 55px;padding:20px;border:1px solid var(--line);background:linear-gradient(180deg,#121a2bf5,#0d1421f5);border-radius:20px}.weatherform{display:flex;gap:9px;flex-wrap:wrap}.weatherform input{flex:1;min-width:210px;background:#0b1120;color:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}.weatherform button{border:0;background:var(--accent);color:#fff;border-radius:10px;padding:12px 16px;font-weight:700}.weathercurrent{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;margin-top:15px}.weatherstat{padding:15px;border:1px solid var(--line);background:#111a2b;border-radius:13px}.weatherstat small{display:block;color:var(--muted);margin-bottom:6px}.temp{font:800 42px Manrope}.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}.day{padding:13px;border:1px solid var(--line);background:#101829;border-radius:12px}.day b{display:block;margin-bottom:8px}.day span{display:block;color:var(--muted);font-size:12px;margin-top:4px}@media(max-width:700px){.weathercurrent{grid-template-columns:1fr 1fr}.forecast{grid-template-columns:1fr 1fr}}.bookcard{display:flex;gap:15px}.cover{width:92px;height:132px;object-fit:cover;border-radius:9px;background:#1a2336;flex:none}.bookinfo{min-width:0}.bookinfo h3{margin:0 0 6px;font-family:Manrope}.meta{font-size:12px;color:var(--muted);margin-bottom:10px}.bookactions{display:flex;gap:7px;flex-wrap:wrap}.notice{margin:0 18px 20px;padding:12px 14px;border:1px solid #4a3e20;background:#211b0e;color:#d7cba9;border-radius:12px;font-size:12px;line-height:1.5}
+.modal{position:fixed;inset:0;z-index:50;background:#000b;display:grid;place-items:center;padding:18px}.hidden{display:none}.modalbox{width:min(760px,100%);max-height:90vh;overflow:auto;background:#0c1322;border:1px solid var(--line);border-radius:20px;padding:22px;position:relative}.close{position:absolute;right:13px;top:10px;width:34px;height:34px;border:0;border-radius:50%;background:#182137;color:#fff;font-size:22px}.json{background:#060a11;border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font-size:12px;white-space:pre-wrap;color:#cbd6e9}.detailgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.detail{padding:12px;border:1px solid var(--line);background:#111a2b;border-radius:11px}.detail small{display:block;color:var(--muted);margin-bottom:3px}
+footer{padding:20px 18px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}.brand small{display:none}}@media(max-width:600px){.top{flex-wrap:wrap}.tabs{order:3;width:100%}.tab{flex:1}.grid{grid-template-columns:1fr;padding:0 14px 45px}.hero{padding:35px 14px 18px}.toolbar{margin-left:14px;margin-right:14px}.stats,.status{padding-left:14px;padding-right:14px}.detailgrid{grid-template-columns:1fr}.bookcard{gap:12px}.cover{width:76px;height:110px}}
 </style>
 </head>
 <body>
-
-<div class="top"><b>Atlas</b> — APIs + Books + Weather + AI</div>
-
-<div class="section">
-<h2>🌐 Public APIs</h2>
-<p>Browse APIs like Open-Meteo, NASA, REST Countries.</p>
-</div>
-
-<div class="section">
-<h2>📚 Books Library</h2>
-<p>Powered by Project Gutenberg (Gutendex).</p>
-</div>
-
-<div class="section">
-<h2>🌤 Weather</h2>
-<input id="city" placeholder="Enter city">
-<button onclick="getWeather()">Check</button>
-<div id="weather"></div>
-</div>
-
-<!-- AI BUTTON -->
-<div id="aiButton">💬</div>
-
-<!-- AI CHAT -->
-<div id="aiChat">
-  <div style="padding:10px;background:#1a2238;">Atlas AI</div>
-  <div id="messages"></div>
-  <div style="display:flex;">
-    <input id="userInput" placeholder="Ask anything..." style="flex:1;padding:10px;border:none;">
-    <button onclick="sendMessage()">Send</button>
-  </div>
-</div>
-
+<header class="top">
+<div class="brand"><div class="logo">A</div><div><b>Atlas</b><small>Public APIs & Open Books</small></div></div>
+<nav class="tabs"><button class="tab active" id="apiTab">Explore APIs</button><button class="tab" id="weatherTab">Weather</button><button class="tab" id="bookTab">Books Library</button></nav>
+<button class="secondary" id="random">🎲 Random</button>
+</header>
+<main>
+<section class="hero"><div class="eyebrow" id="eyebrow">PUBLIC API DIRECTORY</div><h1 id="title">Find the right API for your next project.</h1><p id="subtitle">Search, filter, inspect and favorite public APIs in a fast, mobile-friendly explorer.</p><div class="search"><span>⌕</span><input id="search" placeholder="Search APIs, categories or descriptions…"></div></section>
+<section id="apiView">
+<section class="toolbar"><div id="chips" class="chips"></div><div class="filters"><select id="auth"><option value="">Any auth</option><option>No</option><option>apiKey</option><option>OAuth</option></select><select id="https"><option value="">HTTPS: any</option><option value="true">HTTPS only</option><option value="false">HTTP only</option></select><select id="cors"><option value="">CORS: any</option><option value="yes">CORS yes</option><option value="no">CORS no</option></select><button id="favorites">★ Favorites <span id="favCount">0</span></button></div></section>
+<div class="stats"><div class="stat"><b id="count">0</b><span>results</span></div><div class="stat"><b id="catCount">0</b><span>categories</span></div><div class="stat"><b id="favStat">0</b><span>favorites</span></div></div><div id="status" class="status">Loading API catalog…</div><section id="grid" class="grid"></section>
+</section>
+<section id="weatherView" class="weather"><div class="weatherbox"><div class="eyebrow">LIVE WEATHER</div><h2>Weather Dashboard</h2><p class="desc">Powered by Open-Meteo — no API key required.</p><div class="weatherform"><input id="weatherCity" placeholder="Enter a city, e.g. Tirupati"><button id="weatherSearch">Get Weather</button></div><div id="weatherStatus" class="status">Enter a city to see current weather and a 5-day forecast.</div><div id="weatherCurrent" class="weathercurrent"></div><div id="weatherForecast" class="forecast"></div></div></section><section id="booksView" class="books">
+<div class="notice">Books are loaded from Gutendex / Project Gutenberg metadata. Download buttons appear only when the source provides that format. Project Gutenberg notes that users outside the U.S. should check local copyright law before downloading or using a book.</div>
+<section class="toolbar"><div class="filters"><select id="language"><option value="">All languages</option></select></div></section>
+<div id="bookStatus" class="status">Loading books…</div><section id="bookGrid" class="grid"></section>
+</section>
+</main>
+<div id="modal" class="modal hidden"><div class="modalbox"><button class="close" id="close">×</button><div id="modalBody"></div></div></div>
+<footer>Atlas is a directory interface. Third-party APIs and books remain subject to their respective providers' terms and availability.</footer>
 <script>
-// WEATHER
-async function getWeather(){
- const city=document.getElementById("city").value;
- const geo=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+city);
- const gj=await geo.json();
- const p=gj.results?.[0];
- if(!p) return alert("City not found");
- const w=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&current=temperature_2m`);
- const j=await w.json();
- document.getElementById("weather").innerHTML="Temp: "+j.current.temperature_2m+"°C";
+const $=id=>document.getElementById(id),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let apis=[],category="",onlyFav=false,favs=JSON.parse(localStorage.getItem("atlasFavs")||"[]"),books=[],bookLang="";
+const fallback=[{name:"Open-Meteo",description:"Weather forecasts and historical weather data without an API key.",auth:"No",https:true,cors:"yes",category:"Weather",link:"https://open-meteo.com/"},{name:"REST Countries",description:"Country, currency, language and border data.",auth:"No",https:true,cors:"yes",category:"Countries",link:"https://restcountries.com/"},{name:"PokéAPI",description:"RESTful Pokémon data.",auth:"No",https:true,cors:"yes",category:"Games & Comics",link:"https://pokeapi.co/"},{name:"NASA APIs",description:"NASA open data and imagery.",auth:"apiKey",https:true,cors:"yes",category:"Science",link:"https://api.nasa.gov/"},{name:"Open Library",description:"Open library catalog for books and authors.",auth:"No",https:true,cors:"yes",category:"Books",link:"https://openlibrary.org/developers/api"}];
+async function loadApis(){try{let r=await fetch("https://api.publicapis.org/entries");if(!r.ok)throw 0;let j=await r.json();apis=(j.entries||[]).map(x=>({name:x.API,description:x.Description,auth:x.Auth||"No",https:x.HTTPS,cors:x.Cors||"unknown",category:x.Category||"Other",link:x.Link}))}catch(e){apis=fallback}buildCats();renderApis()}
+function buildCats(){let cs=[...new Set(apis.map(x=>x.category))].sort();$("catCount").textContent=cs.length;$("chips").innerHTML='<button class="chip active" data-cat="">All</button>'+cs.slice(0,30).map(c=>`<button class="chip" data-cat="${esc(c)}">${esc(c)}</button>`).join("");document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{category=b.dataset.cat;document.querySelectorAll("[data-cat]").forEach(x=>x.classList.toggle("active",x===b));renderApis()})}
+function filteredApis(){let q=$("search").value.toLowerCase(),a=$("auth").value,h=$("https").value,c=$("cors").value;return apis.filter(x=>(!q||[x.name,x.description,x.category].join(" ").toLowerCase().includes(q))&&(!category||x.category===category)&&(!a||x.auth.toLowerCase()===a.toLowerCase())&&(!h||String(!!x.https)===h)&&(!c||(c==="yes"?String(x.cors).toLowerCase()==="yes":String(x.cors).toLowerCase()!=="yes"))&&(!onlyFav||favs.includes(x.name)))}
+function renderApis(){let arr=filteredApis();$("count").textContent=arr.length;$("favCount").textContent=favs.length;$("favStat").textContent=favs.length;$("grid").innerHTML=arr.map(x=>`<article class="card"><div class="cardtop"><div class="icon">${esc(x.name.slice(0,3).toUpperCase())}</div><button class="fav ${favs.includes(x.name)?"active":""}" data-fav="${esc(x.name)}">${favs.includes(x.name)?"★":"☆"}</button></div><h3>${esc(x.name)}</h3><p class="desc">${esc(x.description)}</p><div class="badges"><span class="badge">${esc(x.category)}</span><span class="badge">Auth: ${esc(x.auth)}</span><span class="badge ${x.https?"good":""}">${x.https?"HTTPS":"HTTP"}</span><span class="badge">CORS: ${esc(x.cors)}</span></div><div class="actions"><button class="secondary" data-detail="${apis.indexOf(x)}">Details</button><a class="primary" href="${esc(x.link)}" target="_blank" rel="noopener">Official ↗</a></div></article>`).join("")||"<div class='status'>No matching APIs.</div>";document.querySelectorAll("[data-fav]").forEach(b=>b.onclick=()=>{let n=b.dataset.fav;favs=favs.includes(n)?favs.filter(x=>x!==n):[...favs,n];localStorage.setItem("atlasFavs",JSON.stringify(favs));renderApis()});document.querySelectorAll("[data-detail]").forEach(b=>b.onclick=()=>showApi(apis[+b.dataset.detail]))}
+function showApi(x){$("modalBody").innerHTML=`<div class="eyebrow">${esc(x.category)}</div><h2>${esc(x.name)}</h2><p>${esc(x.description)}</p><div class="detailgrid"><div class="detail"><small>Authentication</small>${esc(x.auth)}</div><div class="detail"><small>HTTPS</small>${x.https?"Supported":"Not supported"}</div><div class="detail"><small>CORS</small>${esc(x.cors)}</div><div class="detail"><small>Category</small>${esc(x.category)}</div></div><p><a class="primary" href="${esc(x.link)}" target="_blank" rel="noopener">Open official API ↗</a></p><details><summary>Raw JSON</summary><pre class="json">${esc(JSON.stringify(x,null,2))}</pre></details>`;$("modal").classList.remove("hidden")}
+
+async function getWeather(city){
+  const status=$("weatherStatus"),current=$("weatherCurrent"),forecast=$("weatherForecast");
+  status.textContent="Finding location…";current.innerHTML="";forecast.innerHTML="";
+  try{
+    const g=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(city)+"&count=1&language=en&format=json");
+    if(!g.ok)throw new Error("Location lookup failed");
+    const gj=await g.json(),place=gj.results?.[0];
+    if(!place)throw new Error("City not found");
+    status.textContent="Loading weather for "+place.name+(place.country?", "+place.country:"")+"…";
+    const w=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+place.latitude+"&longitude="+place.longitude+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=5&timezone=auto");
+    if(!w.ok)throw new Error("Weather lookup failed");
+    const j=await w.json(),cw=j.current,d=j.daily;
+    current.innerHTML='<div class="weatherstat"><small>Temperature</small><div class="temp">'+Math.round(cw.temperature_2m)+'°C</div><span>Feels like '+Math.round(cw.apparent_temperature)+'°C</span></div><div class="weatherstat"><small>Humidity</small><div class="temp">'+cw.relative_humidity_2m+'%</div><span>Wind '+Math.round(cw.wind_speed_10m)+' km/h</span></div><div class="weatherstat"><small>Conditions</small><div style="font-size:20px;font-weight:700">'+weatherText(cw.weather_code)+'</div><span>'+place.name+', '+place.country+'</span></div>';
+    forecast.innerHTML=d.time.map((date,i)=>'<div class="day"><b>'+new Date(date+"T12:00:00").toLocaleDateString(undefined,{weekday:"short"})+'</b><div>↑ '+Math.round(d.temperature_2m_max[i])+'° / ↓ '+Math.round(d.temperature_2m_min[i])+'°C</div><span>'+weatherText(d.weather_code[i])+'</span><span>Rain '+(d.precipitation_probability_max[i]??0)+'%</span></div>').join("");
+    status.textContent="Updated from Open-Meteo.";
+  }catch(e){status.textContent=e.message||"Could not load weather right now."}
 }
-
-// AI CHAT
-const btn=document.getElementById("aiButton");
-const chat=document.getElementById("aiChat");
-const messages=document.getElementById("messages");
-
-btn.onclick=()=>{chat.style.display=chat.style.display==="flex"?"none":"flex";};
-
-async function sendMessage(){
- const input=document.getElementById("userInput");
- const text=input.value;
- if(!text) return;
-
- messages.innerHTML+="<div><b>You:</b> "+text+"</div>";
- input.value="";
-
- const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
-  method:"POST",
-  headers:{
-   "Authorization":"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",
-   "Content-Type":"application/json"
-  },
-  body:JSON.stringify({
-   model:"openrouter/free",
-   messages:[{role:"user",content:text}]
-  })
- });
-
- const data=await res.json();
- const reply=data.choices?.[0]?.message?.content||"No response";
-
- messages.innerHTML+="<div><b>AI:</b> "+reply+"</div>";
-}
+function weatherText(code){if(code===0)return"Clear sky";if([1,2,3].includes(code))return"Partly cloudy";if([45,48].includes(code))return"Fog";if([51,53,55,56,57].includes(code))return"Drizzle";if([61,63,65,66,67].includes(code))return"Rain";if([71,73,75,77].includes(code))return"Snow";if([80,81,82].includes(code))return"Rain showers";if([95,96,99].includes(code))return"Thunderstorm";return"Unknown";}
+async function loadBooks(){try{let r=await fetch("https://gutendex.com/books/?page=1");if(!r.ok)throw 0;books=(await r.json()).results||[];$("bookStatus").textContent=`Loaded ${books.length} books from Gutendex.`;let langs=[...new Set(books.flatMap(b=>b.languages||[]))].sort();$("language").innerHTML='<option value="">All languages</option>'+langs.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("");renderBooks()}catch(e){$("bookStatus").textContent="Could not load Gutendex right now."}}
+function formats(b){let f=b.formats||{};return{read:f["text/html"]||f["text/html; charset=utf-8"]||"",epub:f["application/epub+zip"]||"",pdf:f["application/pdf"]||"",txt:f["text/plain; charset=utf-8"]||f["text/plain"]||""}}
+function renderBooks(){let q=$("search").value.toLowerCase(),arr=books.filter(b=>(!q||`${b.title} ${(b.authors||[]).map(a=>a.name).join(" ")}`.toLowerCase().includes(q))&&(!bookLang||(b.languages||[]).includes(bookLang)));$("bookGrid").innerHTML=arr.map(b=>{let f=formats(b),author=(b.authors||[]).map(a=>a.name).join(", ")||"Unknown author",cover=b.formats?.["image/jpeg"]||"";return `<article class="card bookcard"><img class="cover" src="${esc(cover)}" alt=""><div class="bookinfo"><h3>${esc(b.title)}</h3><div class="meta">${esc(author)} · ${esc((b.languages||[]).join(", ").toUpperCase())} · ${b.download_count||0} downloads</div><div class="bookactions">${f.read?`<a class="primary" href="${esc(f.read)}" target="_blank" rel="noopener">Read online</a>`:""}${f.epub?`<a class="secondary" href="${esc(f.epub)}" target="_blank" rel="noopener">EPUB</a>`:""}${f.pdf?`<a class="secondary" href="${esc(f.pdf)}" target="_blank" rel="noopener">PDF</a>`:""}${f.txt?`<a class="secondary" href="${esc(f.txt)}" target="_blank" rel="noopener">TXT</a>`:""}<a class="secondary" href="https://www.gutenberg.org/ebooks/${b.id}" target="_blank" rel="noopener">Gutenberg ↗</a></div></div></article>`}).join("")||"<div class='status'>No matching books.</div>"}
+function setView(view){let book=view==="book",weather=view==="weather";$("apiView").style.display=!book&&!weather?"block":"none";$("booksView").classList.toggle("active",book);$("weatherView").classList.toggle("active",weather);$("apiTab").classList.toggle("active",!book&&!weather);$("bookTab").classList.toggle("active",book);$("weatherTab").classList.toggle("active",weather);$("eyebrow").textContent=book?"OPEN BOOKS LIBRARY":weather?"LIVE WEATHER":"PUBLIC API DIRECTORY";$("title").textContent=book?"Read classic books from legal public-domain sources.":weather?"Check current conditions and a 5-day forecast.":"Find the right API for your next project.";$("subtitle").textContent=book?"Search Project Gutenberg metadata and open only formats actually supplied by the source.":weather?"Search any city using Open-Meteo. No API key required.":"Search, filter, inspect and favorite public APIs in a fast, mobile-friendly explorer.";$("search").style.display=weather?"none":"flex";$("random").style.display=(book||weather)?"none":"block";if(book&&!books.length)loadBooks();if(book)renderBooks()}
+$("apiTab").onclick=()=>setView("api");$("weatherTab").onclick=()=>setView("weather");$("bookTab").onclick=()=>setView("book");$("weatherSearch").onclick=()=>{let city=$("weatherCity").value.trim();if(city)getWeather(city)};$("weatherCity").onkeydown=e=>{if(e.key==="Enter")$("weatherSearch").click()};$("search").oninput=()=>{renderApis();if($("booksView").classList.contains("active"))renderBooks()};["auth","https","cors"].forEach(id=>$(id).onchange=renderApis);$("favorites").onclick=()=>{onlyFav=!onlyFav;renderApis()};$("language").onchange=e=>{bookLang=e.target.value;renderBooks()};$("random").onclick=()=>showApi(apis[Math.floor(Math.random()*apis.length)]);$("close").onclick=()=>$("modal").classList.add("hidden");$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.add("hidden")};loadApis();
 </script>
-
 </body>
 </html>

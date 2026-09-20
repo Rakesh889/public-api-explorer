@@ -78,7 +78,29 @@ function weatherText(code){if(code===0)return"Clear sky";if([1,2,3].includes(cod
 let bookCategory="";
 function bookCategoryOf(b){const t=[...(b.subjects||[]),...(b.bookshelves||[]),b.title||""].join(" ").toLowerCase();if(/mystery|detective|crime|spy stories|detectives/.test(t))return "Mystery & Detective";if(/horror|ghost|gothic|supernatural|vampire|haunted/.test(t))return "Horror & Ghost Stories";if(/romance|love stories|love in|courtship|marriage|love story/.test(t))return "Love Stories";if(/children|juvenile|nursery|fairy tale|young readers|school stories/.test(t))return "Children & Kids";if(/fantasy|magic|mytholog|legend|fairy|dragon|wizard|fairy tales|fantastic fiction/.test(t))return "Fantasy & Magic";if(/adventure|travel|voyage|exploration|pirate|sea stories|western|expedition/.test(t))return "Adventure & Travel";if(/science|mathematics|physics|chemistry|biology|education|textbook|technology|engineering/.test(t))return "Science & Learning";if(/history|historical|biography|autobiography|war stories|politics|military/.test(t))return "History & Biography";if(/poetry|poems|drama|plays|theatre|tragedy|comedy/.test(t))return "Poetry & Drama";if(/novels?|fiction|short stories|literature|essays|classic/.test(t))return "Classic Stories";return "Other Books"}
 function isPopular(b){return Number(b.download_count||0)>=10000}
-async function loadBooks(){try{let pages=await Promise.all([1,2,3,4,5].map(p=>fetch("https://gutendex.com/books/?page="+p).then(r=>{if(!r.ok)throw 0;return r.json()})));books=pages.flatMap(x=>x.results||[]);let seen=new Set();books=books.filter(b=>!seen.has(b.id)&&seen.add(b.id));$("bookStatus").textContent=`Loaded ${books.length} books from Gutendex.`;let langs=[...new Set(books.flatMap(b=>b.languages||[]))].sort();$("language").innerHTML='<option value="">All languages</option>'+langs.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("");renderBooks()}catch(e){$("bookStatus").textContent="Could not load Gutendex right now."}}
+async function fetchBooksPage(page){let r=await fetch("https://gutendex.com/books/?page="+page,{cache:"no-store"});if(!r.ok)throw new Error("Gutendex page "+page+" failed");return r.json()}
+async function loadBooks(){
+  $("bookStatus").textContent="Loading books from Gutendex…";
+  try{
+    const first=await fetchBooksPage(1);
+    books=first.results||[];
+    let seen=new Set(books.map(b=>b.id));
+    renderBookLanguages();
+    $("bookStatus").textContent=`Loaded ${books.length} books from Gutendex. Loading more…`;
+    renderBooks();
+    const extra=await Promise.allSettled([2,3,4,5].map(fetchBooksPage));
+    extra.forEach(r=>{if(r.status==="fulfilled"){for(const b of (r.value.results||[])){if(!seen.has(b.id)){seen.add(b.id);books.push(b)}}}});
+    renderBookLanguages();
+    const failed=extra.filter(r=>r.status==="rejected").length;
+    $("bookStatus").textContent=failed?`Loaded ${books.length} books from Gutendex. Some additional pages were unavailable.`:`Loaded ${books.length} books from Gutendex.`;
+    renderBooks();
+  }catch(e){
+    books=[];
+    $("bookStatus").textContent="Could not load Gutendex right now. Please refresh and try again.";
+    renderBooks();
+  }
+}
+function renderBookLanguages(){let langs=[...new Set(books.flatMap(b=>b.languages||[]))].sort();$("language").innerHTML='<option value="">All languages</option>'+langs.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("")}
 function formats(b){let f=b.formats||{};return{read:f["text/html"]||f["text/html; charset=utf-8"]||"",epub:f["application/epub+zip"]||"",pdf:f["application/pdf"]||"",txt:f["text/plain; charset=utf-8"]||f["text/plain"]||""}}
 function renderBooks(){let q=$("search").value.toLowerCase();let arr=books.filter(b=>{let text=`${b.title} ${(b.authors||[]).map(a=>a.name).join(" ")}`.toLowerCase();let cat=bookCategoryOf(b);let matchesCat=!bookCategory||(bookCategory==="Popular"?isPopular(b):cat===bookCategory);return(!q||text.includes(q))&&(!bookLang||(b.languages||[]).includes(bookLang))&&matchesCat});if(bookCategory==="Popular")arr.sort((a,b)=>(b.download_count||0)-(a.download_count||0));$("bookGrid").innerHTML=arr.map(b=>{let f=formats(b),author=(b.authors||[]).map(a=>a.name).join(", ")||"Unknown author",cover=b.formats?.["image/jpeg"]||"",cat=bookCategoryOf(b);return `<article class="card bookcard"><img class="cover" src="${esc(cover)}" alt=""><div class="bookinfo"><h3>${esc(b.title)}</h3><div class="meta">${esc(author)} · ${esc((b.languages||[]).join(", ").toUpperCase())} · ${b.download_count||0} downloads</div><div class="badges"><span class="badge">${esc(cat)}</span></div><div class="bookactions">${f.read?`<a class="primary" href="${esc(f.read)}" target="_blank" rel="noopener">Read online</a>`:""}${f.epub?`<a class="secondary" href="${esc(f.epub)}" target="_blank" rel="noopener">EPUB</a>`:""}${f.pdf?`<a class="secondary" href="${esc(f.pdf)}" target="_blank" rel="noopener">PDF</a>`:""}${f.txt?`<a class="secondary" href="${esc(f.txt)}" target="_blank" rel="noopener">TXT</a>`:""}<a class="secondary" href="https://www.gutenberg.org/ebooks/${b.id}" target="_blank" rel="noopener">Gutenberg ↗</a></div></div></article>`}).join("")||"<div class='status'>No matching books.</div>"}
 document.querySelectorAll("[data-bookcat]").forEach(b=>b.onclick=()=>{bookCategory=b.dataset.bookcat;document.querySelectorAll("[data-bookcat]").forEach(x=>x.classList.toggle("active",x===b));renderBooks()})
